@@ -1,31 +1,18 @@
-#ifndef MONTY_H
-#define MONTY_H
+#ifndef _MONTY_H_
+#define _MONTY_H_
 
-#include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <ctype.h>
 
-#define STACK 0
-#define QUEUE 1
+/*extern variable, stack or queue*/
 
-/**
- * struct instruction_s - opcode and its function
- * @opcode: the opcode
- * @f: function to handle the opcode
- *
- * Description: opcode and its function
- * for stack, queues, LIFO, FIFO Holberton project
- */
-typedef struct instruction_s
-{
-	char *opcode;
-	void (*f)(stack_t **stack, unsigned int line_number);
-} instruction_t;
+extern char *flag;
+
+#define BUF_LENGTH 1024
 
 /**
  * struct stack_s - doubly linked list representation of a stack (or queue)
@@ -38,77 +25,73 @@ typedef struct instruction_s
  */
 typedef struct stack_s
 {
-	int n;
-	struct stack_s *prev;
-	struct stack_s *next;
+        int n;
+        struct stack_s *prev;
+        struct stack_s *next;
 } stack_t;
 
 /**
- * struct variables_s - structure with all the main's variables
- * @line: buffer for getline function
- * @len_line: length of buffer for getline function
- * @fp: file pointer
- * @opcode: name of opcode
- * @op: function pointer to opcodes functions
- * @stack: pointer to a double linked list
- * @lines: number of lines
+ * struct instruction_s - opcoode and its function
+ * @opcode: the opcode
+ * @f: function to handle the opcode
  *
- * Description: estructure that contains the
- * variables of the main program
+ * Description: opcode and its function
+ * for stack, queues, LIFO, FIFO Holberton project
  */
-typedef struct variables_s
+typedef struct instruction_s
 {
-	char *line;
-	size_t len_line;
-	FILE *fp;
-	char *opcode;
-	void (*op)(stack_t **stack, unsigned int line_number);
-	stack_t *stack;
-	unsigned int lines;
-} vars_t;
+        char *opcode;
+        void (*f)(stack_t **stack, unsigned int line_number);
+} instruction_t;
 
-/**
- * struct extern_variables_s - estruct of external variables
- * @op_arg: argument of the actual opcode in main program
- * @len_stack: stack length
- * @stack_mode: stack mode, it could be STACK(0) or QUEUE(1)
- *
- * Description: structure that contains all the external variables
- * because it can be declared only one external variable, in this
- * case a instance of this structure
- */
-typedef struct extern_variables_s
-{
-	char *op_arg;
-	unsigned int len_stack;
-	int stack_mode;
-} extern_variables_t;
 
-extern_variables_t e_vars;
 
-void (*get_opcode(char *opcode))(stack_t **stack, unsigned int line_number);
-void init_vars(vars_t *vars);
-void _push(stack_t **stack, unsigned int line_number);
-void _pall(stack_t **stack, unsigned int line_number);
-stack_t *add_snode(stack_t **head, const int n);
-stack_t *add_dnodeint(stack_t **head, const int n);
-stack_t *add_dnodeint_end(stack_t **head, const int n);
+/*basic functions related to doubly linked list*/
+stack_t *add_node(stack_t **head, const int n);
 void free_stack(stack_t *head);
-void _pint(stack_t **stack, unsigned int line_number);
-void _pop(stack_t **stack, unsigned int line_number);
-void _swap(stack_t **stack, unsigned int line_number);
-void _add(stack_t **stack, unsigned int line_number);
-void _nop(stack_t **stack, unsigned int line_number);
-void _sub(stack_t **stack, unsigned int line_number);
-void _div(stack_t **stack, unsigned int line_number);
-void _mul(stack_t **stack, unsigned int line_number);
-void _mod(stack_t **stack, unsigned int line_number);
-void _pchar(stack_t **stack, unsigned int line_number);
-void _pstr(stack_t **stack, unsigned int line_number);
-void _rotl(stack_t **stack, unsigned int line_number);
-void _rotr(stack_t **stack, unsigned int line_number);
-void _stack(stack_t **stack, unsigned int line_number);
-void _queue(stack_t **stack, unsigned int line_number);
+stack_t *pop_s(stack_t **head);
+stack_t *dequeue(stack_t **head);
+stack_t *add_node_end(stack_t **head, int n);
 
-#endif /* _MONTY_H_ */
+/*functions to print the stack or queue*/
+void pall(stack_t **h, unsigned int l);
+void pstr(stack_t **h, unsigned int l);
+void pchar(stack_t **h, unsigned int l);
+void pint(stack_t **h, unsigned int l);
 
+/*in push_and_pop*/
+void pop(stack_t **h, unsigned int l);
+int push (stack_t **h, char *line, unsigned int l);
+
+/*in move_elements_functions*/
+void swap(stack_t **h, unsigned int l);
+void rotl(stack_t **h, unsigned int l);
+void rotr(stack_t **h, unsigned int l);
+
+/*in calculations*/
+int get_argument(stack_t **h, char *opcode, unsigned int l);
+void _add(stack_t **h, unsigned int l);
+void _sub(stack_t **h, unsigned int l);
+void _div(stack_t **h, unsigned int l);
+void _mul(stack_t **h, unsigned int l);
+void _mod(stack_t **h, unsigned int l);
+
+/*in nopandqueue*/
+void stack(stack_t **h, unsigned int l);
+void queue(stack_t **h, unsigned int l);
+void nop(stack_t **h, unsigned int l);
+
+/*in helpers*/
+char *skip_spaces(char *s);
+char *reach_number(char *s);
+int _strcmp(char *s1, char *s2);
+int _strncmp(char *s1, char *s2, int n);
+int _strlen(char *s);
+
+/* in getline.c */
+ssize_t _getline(char **buf, size_t *size, int file_strm);
+
+/*in execute*/
+int execute(stack_t **h, char *line, unsigned int line_number);
+
+#endif /* _MONTY_H */
